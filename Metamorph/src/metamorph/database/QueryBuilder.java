@@ -25,6 +25,16 @@ import metamorph.object.MetamorphObject;
 public class QueryBuilder {
 	private Connection con;
 	private PreparedStatement pst;
+	public QueryBuilder(){
+		try {
+			con = DBUtil.getConnection();
+			con.setAutoCommit(false);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	public int querySave(MetamorphObject metaO, Object obj2) throws Exception{
 		String query = "insert into "+metaO.getName()+"(";
 		List<MetamorphField> columns = metaO.getMetamorphField();
@@ -214,7 +224,6 @@ public class QueryBuilder {
 		return query;
 	}
 	public List<Object> queryReadAll(MetamorphObject obj) throws Exception{
-		con = DBUtil.getConnection();
 		String query = prepareSelectQuery(obj);
 		pst = con.prepareStatement(query);
 		ResultSet rs = pst.executeQuery();
@@ -234,7 +243,6 @@ public class QueryBuilder {
 		return newFKOList;
 	}
 	public Object queryReadById(MetamorphObject obj, int id) throws Exception{
-		con = DBUtil.getConnection();
 		MetamorphField pk = getPrimaryKey(obj.getMetamorphField());
 		String query = prepareSelectQuery(obj);
 		query += " where " + obj.getAliasName()+"."+pk.getColumnName() + "="+id;
@@ -276,8 +284,6 @@ public class QueryBuilder {
 		return pst;
 	}
 	public int runStatementInsert(Map<Integer, ColumnTableObjectLinker> columns, Object obj2, String query) throws Exception{
-		con = DBUtil.getConnection();
-		con.setAutoCommit(false);
 		pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 		pst = getValue(columns,pst,obj2);
 		pst.executeUpdate();
@@ -290,16 +296,12 @@ public class QueryBuilder {
 		return id;
 	}
 	public Object runStatement(Map<Integer, ColumnTableObjectLinker> columns, Object obj2, String query) throws Exception{
-		con = DBUtil.getConnection();
-		con.setAutoCommit(false);
 		pst = con.prepareStatement(query);
 		pst = getValue(columns,pst,obj2);
 		pst.executeUpdate();
 		return obj2;
 	}
 	public void runStatement(int id, String query) throws Exception{
-		con = DBUtil.getConnection();
-		con.setAutoCommit(false);
 		pst = con.prepareStatement(query);
 		pst.setInt(1, id);
 		pst.executeUpdate();
@@ -340,8 +342,6 @@ public class QueryBuilder {
 		return colPK;
 	}
 	public void runPostCustomQuery(String query, Map<Integer,String> fields) throws Exception{
-		con = DBUtil.getConnection();
-		con.setAutoCommit(false);
 		pst = con.prepareStatement(query);
 		for(Integer key : fields.keySet()){
 			pst.setString(key, fields.get(key));
@@ -370,8 +370,6 @@ public class QueryBuilder {
 		ResultSet rs = null;
 		List<Map<String, Object>> dataList = new ArrayList();
 		try {
-			con = DBUtil.getConnection();
-			con.setAutoCommit(false);
 			pst = con.prepareStatement(query);
 			
 			rs = pst.executeQuery();

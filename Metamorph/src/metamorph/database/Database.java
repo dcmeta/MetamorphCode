@@ -14,12 +14,12 @@ public class Database {
 	private QueryBuilder queryBuilder;
 	public Database(Object obj){
 		metaO = MetamorphNest.getMetamorphGenerator().getMetamorphObject(obj.getClass());
+		queryBuilder = new QueryBuilder();
 		this.obj = obj;
 	}
 	public Database(){}
 	public int save(Object obj){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.querySave(metaO, obj);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -28,7 +28,6 @@ public class Database {
 	}
 	public List<Object> getAll(){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.queryReadAll(metaO);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -37,7 +36,6 @@ public class Database {
 	}
 	public Object update(Object obj){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.queryUpdate(metaO, obj);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -46,7 +44,6 @@ public class Database {
 	}
 	public Object getById(int id){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.queryReadById(metaO, id);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,7 +52,6 @@ public class Database {
 	}
 	public Object delete(Object obj){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.queryDelete(metaO, obj);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +60,6 @@ public class Database {
 	}
 	public int deleteById(int id){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.queryDeleteById(metaO, id);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,7 +68,6 @@ public class Database {
 	}
 	public void runCustomPostQuery(String query, Map<Integer, String> fields){
 		try {
-			queryBuilder = new QueryBuilder();
 			queryBuilder.runPostCustomQuery(query, fields);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,7 +84,6 @@ public class Database {
 //	}
 	public List<Map<String,Object>> runRawFetchQuery(String query){
 		try {
-			queryBuilder = new QueryBuilder();
 			return queryBuilder.runRawQuery(query);
 		} catch (Exception e) {
 			e.printStackTrace();
