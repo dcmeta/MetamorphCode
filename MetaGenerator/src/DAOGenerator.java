@@ -15,9 +15,9 @@ public class DAOGenerator {
 		JCodeModel codeModel = new JCodeModel();
 	  	JPackage jp = codeModel._package(Temporary.daoPkg);
 	  	JDefinedClass jc = jp._class(Helper.sentenceCase(tableName) +"DAO");
-	  	jc._extends( codeModel.ref(Temporary.daoParentPkg+".DAO").narrow(codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(tableName))));
+	  	jc._extends( codeModel.ref(Temporary.daoParentPkg+".DAO").narrow(codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(tableName))));
 	  	JMethod constructor = jc.constructor(JMod.PUBLIC);
-	  	constructor.body().add(JExpr.invoke("super").arg(JExpr._new(codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(tableName)))));
+	  	constructor.body().add(JExpr.invoke("super").arg(JExpr._new(codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(tableName)))));
 	  	try{
 	  		  codeModel.build(new File("src/"));
 	  	  }catch(IOException e){System.out.println(e);}

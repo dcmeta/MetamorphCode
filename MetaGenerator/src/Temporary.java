@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Temporary {
-	static String modelPkg = "model";
+	static String entityPkg = "entity";
 	static String controllerPkg = "controller";
 	static String configPkg = "config";
 	static String daoPkg = "dao";

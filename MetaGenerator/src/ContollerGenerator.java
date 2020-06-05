@@ -25,7 +25,7 @@ public class ContollerGenerator {
 	  	jc.annotate(codeModel.ref("javax.servlet.annotation.WebServlet")).param("value", "/"+tableName+"/*");
 	  	jc._extends( codeModel.ref(Temporary.controllerParentPkg+".BaseController"));
 	  	
-	  	JClass genericClass = codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(tableName));
+	  	JClass genericClass = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(tableName));
 	  	
 	  	generateStoreMethod(table,codeModel,jc);
 	  	generateUpdateMethod(table,codeModel,jc);
@@ -42,7 +42,7 @@ public class ContollerGenerator {
 		String tableName = table.getName();
 		JMethod storeMethod = jc.method(JMod.PUBLIC, codeModel.VOID, "store");
 	  	storeMethod.annotate(codeModel.ref(Temporary.annotationPkg+".PostMethod")).param("url", "/store");
-	  	JVar requestBody = storeMethod.param(codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(tableName)), tableName);
+	  	JVar requestBody = storeMethod.param(codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(tableName)), tableName);
 	  	requestBody.annotate(codeModel.ref(Temporary.annotationPkg+".RequestBody"));
 	  	JClass dao = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(tableName)+"DAO");
 	  	JVar daoDeclaration = storeMethod.body().decl(dao, "dao",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(tableName)+"DAO")));
@@ -55,7 +55,7 @@ public class ContollerGenerator {
 		String tableName = table.getName();
 		JMethod updateMethod = jc.method(JMod.PUBLIC, codeModel.VOID, "update");
 	  	updateMethod.annotate(codeModel.ref(Temporary.annotationPkg+".PostMethod")).param("url", "/update");
-	  	JVar requestBody = updateMethod.param(codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(tableName)), tableName);
+	  	JVar requestBody = updateMethod.param(codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(tableName)), tableName);
 	  	requestBody.annotate(codeModel.ref(Temporary.annotationPkg+".RequestBody"));
 	  	JClass dao = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(tableName)+"DAO");
 	  	JVar daoDeclaration = updateMethod.body().decl(dao, "dao",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(tableName)+"DAO")));
@@ -78,7 +78,7 @@ public class ContollerGenerator {
 	  	for(Column col : table.getCols()){
 	  		if(col.isForeignKey()){
 	  			JClass dao2 = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO");
-	  			JClass genericClass2 = codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(col.getTableReference()));
+	  			JClass genericClass2 = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(col.getTableReference()));
 		  		JVar daoDeclaration2 = editMethod.body().decl(dao2, col.getTableReference()+"DAO",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO")));
 			  	JVar result2 = editMethod.body().decl(listClass.narrow(genericClass2), col.getTableReference(),daoDeclaration2.invoke("getAll"));
 			  	editMethod.body().add(JExpr.ref("requestResponse").invoke("getRequest").invoke("setAttribute").arg(col.getTableReference()).arg(result2));
@@ -117,7 +117,7 @@ public class ContollerGenerator {
 	  	
 	  	for(Column col : table.getCols()){
 	  		if(col.isForeignKey()){
-	  			JClass genericClass = codeModel.ref(Temporary.modelPkg+"."+Helper.sentenceCase(col.getTableReference()));
+	  			JClass genericClass = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(col.getTableReference()));
 	  			JClass dao = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO");
 		  		JVar daoDeclaration = createMethod.body().decl(dao, col.getTableReference()+"DAO",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO")));
 			  	JVar result = createMethod.body().decl(listClass.narrow(genericClass),col.getTableReference(),daoDeclaration.invoke("getAll"));

@@ -24,7 +24,7 @@ public class MetaOConfigGenerator {
 	  	JVar metaVar = configMethod.body().decl(metaNest, "metaNest",JExpr._new(metaNest));
 	  	for(Table tbl : Temporary.tableList){
 	  		String tableName = tbl.getName();
-	  		JClass c = codeModel.directClass(Temporary.modelPkg+"."+Helper.sentenceCase(tableName));
+	  		JClass c = codeModel.directClass(Temporary.entityPkg+"."+Helper.sentenceCase(tableName));
 	  		configMethod.body().add(metaVar.invoke("addClass").arg(c.dotclass()));
 	  	}
 	  	configMethod.body().add(metaVar.invoke("process"));

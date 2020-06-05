@@ -80,7 +80,7 @@ public class Helper {
 	public static void generateAllModel() throws SQLException, JClassAlreadyExistsException, IOException{
 		Helper.generateAllTable();
 		for(Table t : Temporary.tableList){
-			ModelGenerator.generateModel(t);
+			EntityGenerator.generateModel(t);
 		}
 	}
 	public static void generateAllController() throws SQLException, JClassAlreadyExistsException, IOException{
@@ -112,7 +112,7 @@ public class Helper {
 		
 		if(cmds[2]!=null){
 			Helper.generateAllTable();
-			ModelGenerator.generateModel(Helper.getTable(cmds[2]));
+			EntityGenerator.generateModel(Helper.getTable(cmds[2]));
 		}else{
 			System.err.println("Command not found");
 		}
@@ -185,7 +185,7 @@ public class Helper {
 		  	  rs = pst.executeQuery();
 		  	  while(rs.next()){
 		  		  List<String> fkComp = new ArrayList<>();
-		  		  fkComp = ModelGenerator.getForeignKeyTableName(Helper.getConnection(),Temporary.dbname,s,rs.getString("Field"));
+		  		  fkComp = EntityGenerator.getForeignKeyTableName(Helper.getConnection(),Temporary.dbname,s,rs.getString("Field"));
 		  		  columnList.add(new Column(rs.getString("Field")
 		  				, rs.getString("Type")
 		  	  			, rs.getString("Key").equals("PRI")?true:false
@@ -218,7 +218,7 @@ public class Helper {
 	}
 	public static void generateAllCompByTable(String[] cmds)throws SQLException, JClassAlreadyExistsException, IOException{
 		Helper.generateAllTable();
-			ModelGenerator.generateModel(Helper.getTable(cmds[2]));
+			EntityGenerator.generateModel(Helper.getTable(cmds[2]));
 	  	  	DAOGenerator.generateDAO(Helper.getTable(cmds[2]));
 		  	PageGenerator.generateTableComponent(Helper.getTable(cmds[2]));
 	  	  PageGenerator.generatePage(Helper.getTable(cmds[2]));
@@ -232,7 +232,7 @@ public class Helper {
 	public static void generate()throws SQLException, JClassAlreadyExistsException, IOException{
 		Helper.generateAllTable();
 		for(Table table : Temporary.tableList){
-			ModelGenerator.generateModel(table);
+			EntityGenerator.generateModel(table);
 	  	  	DAOGenerator.generateDAO(table);
 		  	PageGenerator.generateTableComponent(table);
 	  	  PageGenerator.generatePage(table);
