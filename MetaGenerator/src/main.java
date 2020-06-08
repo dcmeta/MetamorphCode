@@ -26,6 +26,10 @@ import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JVar;
 
+import downloader.FactoryDownloader;
+import generator.PageGenerator;
+import helper.Helper;
+
 public class main {
 	
 	public static void main(String[] args) throws SQLException, JClassAlreadyExistsException, IOException{
@@ -85,9 +89,11 @@ public class main {
 				 Helper.generateAllCompByTable(cmds);
 			 }else if(cmds[1].equals("-h")){
 				 showHelp();
+			 }else if(cmds[1].equals("prepare")){
+				 FactoryDownloader.readRepository();
 			 }
 			 else
-				System.err.println("Command not found");
+				System.err.println("Command not found. Please use mg -h for getting help");
 		}catch(Exception e){
    		 	System.err.println(e);
    	 	}	 
