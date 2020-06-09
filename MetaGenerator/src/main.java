@@ -56,6 +56,7 @@ public class main {
 	public static void filterSecondCmd(String[] cmds) throws SQLException, JClassAlreadyExistsException, IOException{
 		try{
 			if(cmds[1].equals("-a")){
+				FactoryDownloader.readRepository();
 				Helper.generate();
 		    	PageGenerator.createWebXml();
 			 }else if(cmds[1].equals("config"))

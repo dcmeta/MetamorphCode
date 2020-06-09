@@ -1,6 +1,7 @@
 package generator;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.codemodel.JClass;
@@ -80,14 +81,17 @@ public class ContollerGenerator {
 	  	JVar result = editMethod.body().decl(genericClass, "result",daoDeclaration.invoke("getById").arg(urlVariable));
 	  	
 	  	JClass listClass = codeModel.ref(List.class);
-	  	
+	  	List<String> classes = new ArrayList<>();
 	  	for(Column col : table.getCols()){
 	  		if(col.isForeignKey()){
-	  			JClass dao2 = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO");
-	  			JClass genericClass2 = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(col.getTableReference()));
-		  		JVar daoDeclaration2 = editMethod.body().decl(dao2, col.getTableReference()+"DAO",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO")));
-			  	JVar result2 = editMethod.body().decl(listClass.narrow(genericClass2), col.getTableReference(),daoDeclaration2.invoke("getAll"));
-			  	editMethod.body().add(JExpr.ref("requestResponse").invoke("getRequest").invoke("setAttribute").arg(col.getTableReference()).arg(result2));
+	  			if(!isExist(classes,col.getTableReference())){
+	  				classes.add(col.getTableReference());
+	  				JClass dao2 = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO");
+		  			JClass genericClass2 = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(col.getTableReference()));
+			  		JVar daoDeclaration2 = editMethod.body().decl(dao2, col.getTableReference()+"DAO",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO")));
+				  	JVar result2 = editMethod.body().decl(listClass.narrow(genericClass2), col.getTableReference(),daoDeclaration2.invoke("getAll"));
+				  	editMethod.body().add(JExpr.ref("requestResponse").invoke("getRequest").invoke("setAttribute").arg(col.getTableReference()).arg(result2));
+	  			}
 	  		}
 	  		
 	  	}
@@ -121,13 +125,17 @@ public class ContollerGenerator {
 	  	createMethod.annotate(codeModel.ref(Temporary.annotationPkg+".GetMethod")).param("url", "/create");
 	  	JClass listClass = codeModel.ref(List.class);
 	  	
+	  	List<String> classes = new ArrayList<>();
 	  	for(Column col : table.getCols()){
 	  		if(col.isForeignKey()){
-	  			JClass genericClass = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(col.getTableReference()));
-	  			JClass dao = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO");
-		  		JVar daoDeclaration = createMethod.body().decl(dao, col.getTableReference()+"DAO",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO")));
-			  	JVar result = createMethod.body().decl(listClass.narrow(genericClass),col.getTableReference(),daoDeclaration.invoke("getAll"));
-			  	createMethod.body().add(JExpr.ref("requestResponse").invoke("getRequest").invoke("setAttribute").arg(col.getTableReference()).arg(result));
+	  			if(!isExist(classes,col.getTableReference())){
+	  				classes.add(col.getTableReference());
+		  			JClass genericClass = codeModel.ref(Temporary.entityPkg+"."+Helper.sentenceCase(col.getTableReference()));
+		  			JClass dao = codeModel.directClass(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO");
+			  		JVar daoDeclaration = createMethod.body().decl(dao, col.getTableReference()+"DAO",JExpr._new(codeModel.ref(Temporary.daoPkg+"."+Helper.sentenceCase(col.getTableReference())+"DAO")));
+				  	JVar result = createMethod.body().decl(listClass.narrow(genericClass), col.getTableReference(), daoDeclaration.invoke("getAll"));
+				  	createMethod.body().add(JExpr.ref("requestResponse").invoke("getRequest").invoke("setAttribute").arg(col.getTableReference()).arg(result));
+	  			}
 	  		}
 	  	}
 	  	createMethod.body().add(JExpr.ref("requestResponse").invoke("forward").arg(String.format("/page/create_%s_page.jsp",tableName)));
@@ -143,5 +151,13 @@ public class ContollerGenerator {
 	  	deleteMethod.body().add(daoDeclaration.invoke("delete").arg(urlVariable));
 	  	JVar cp = deleteMethod.body().decl(codeModel.ref(String.class),"cp",JExpr.ref("requestResponse").invoke("getRequest").invoke("getContextPath"));
 	  	deleteMethod.body().add(JExpr.ref("requestResponse").invoke("sendRedirect").arg(cp.assignPlus(JExpr.lit("/" + tableName + "/show"))));
+	}
+	public static boolean isExist(List<String> list, String name){
+		for(int i = 0;i<list.size();i++){
+			if(list.get(i).equals(name)){
+				return true;
+			}
+		}
+		return false;
 	}
 }
